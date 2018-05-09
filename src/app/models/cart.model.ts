@@ -1,12 +1,25 @@
 import {Injectable} from '@angular/core';
 
 import {Product} from './product.model';
+import {Repository} from './repository';
 
 @Injectable()
 export class Cart {
   selections: ProductSelection[] = [];
   itemCount = 0;
   totalPrice = 0;
+
+  constructor(private repo: Repository) {
+    const cartData = repo.getSessionData('cart');
+
+/*    if (cartData != null) {
+      cartData.map(item => new ProductSelection(this, item.productId, item.name, item.price, item.quantity))
+        .forEach(item => this.selections.push(item));
+      this.update(false);
+    }*/
+
+    console.log(cartData);
+  }
 
   addProduct(product: Product) {
     const selection = this.selections.find(ps => ps.productId === product.productId);
@@ -43,11 +56,20 @@ export class Cart {
     this.update();
   }
 
-  update() {
+  update(storeData: boolean = true) {
     this.itemCount = this.selections.map(ps => ps.quantity)
       .reduce((prev, curr) => prev + curr, 0);
     this.totalPrice = this.selections.map(ps => ps.price * ps.quantity)
       .reduce((prev, curr) => prev + curr, 0);
+
+    if (storeData) {
+      this.repo.storeSessionData('cart', this.selections.map(s => {
+        return {
+          productId: s.productId, name: s.name,
+          price: s.price, quantity: s.quantity
+        };
+      }));
+    }
   }
 }
 

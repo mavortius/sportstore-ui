@@ -3,6 +3,8 @@ import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 
+import {StorageServiceModule} from 'ngx-webstorage-service';
+
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {ModelModule} from './models/model.module';
@@ -18,7 +20,8 @@ import {StoreModule} from './store/store-module';
     HttpClientModule,
     AppRoutingModule,
     ModelModule,
-    StoreModule
+    StoreModule,
+    StorageServiceModule
   ],
   providers: [],
   bootstrap: [AppComponent]

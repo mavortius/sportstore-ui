@@ -1,10 +1,12 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
 import {environment} from '../../environments/environment';
 import {Product} from './product.model';
 import {Supplier} from './supplier.model';
 import {Filter, Pagination} from './config-classes.repository';
+import {Observable} from 'rxjs/Observable';
+import {SESSION_STORAGE, StorageService} from 'ngx-webstorage-service';
 
 const productsUrl = 'products';
 const suppliersUrl = 'suppliers';
@@ -19,7 +21,8 @@ export class Repository {
   private filterObject = new Filter();
   private paginationObject = new Pagination();
 
-  constructor(private http: HttpClient) {
+  constructor(@Inject(SESSION_STORAGE) private storage: StorageService,
+              private http: HttpClient) {
     // this.filter.category = 'soccer';
     this.filter.related = true;
     this.getProducts();
@@ -141,5 +144,17 @@ export class Repository {
 
   get pagination(): Pagination {
     return this.paginationObject;
+  }
+
+  storeSessionData(dataType: string, data: any) {
+    this.storage.set(dataType, data);
+  }
+
+  getSessionData(dataType: string): any {
+    const data = this.storage.get(dataType);
+
+    console.log(data);
+
+    return data;
   }
 }
