@@ -14,6 +14,7 @@ export class Repository {
   product: Product;
   products: Product[];
   suppliers: Supplier[] = [];
+  categories: string[] = [];
 
   private filterObject = new Filter();
 
@@ -40,8 +41,13 @@ export class Repository {
       url += `&search=${this.filter.search}`;
     }
 
-    this.http.get<Product[]>(url)
-      .subscribe(response => this.products = response,
+    url += '&metadata=true';
+
+    this.http.get<any>(url)
+      .subscribe(response => {
+          this.products = response.data;
+          this.categories = response.categories;
+        },
         error => console.error(error));
   }
 
