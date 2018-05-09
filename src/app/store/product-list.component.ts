@@ -13,6 +13,10 @@ export class ProductListComponent {
   }
 
   get products(): Product[] {
-    return this.repo.products;
+    if (this.repo.products != null && this.repo.products.length > 0) {
+      const pageIndex = (this.repo.pagination.currentPage - 1) * this.repo.pagination.productsPerPage;
+
+      return this.repo.products.slice(pageIndex, pageIndex + this.repo.pagination.productsPerPage);
+    }
   }
 }

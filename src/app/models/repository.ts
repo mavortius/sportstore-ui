@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {Product} from './product.model';
 import {Supplier} from './supplier.model';
-import {Filter} from './config-classes.repository';
+import {Filter, Pagination} from './config-classes.repository';
 
 const productsUrl = 'products';
 const suppliersUrl = 'suppliers';
@@ -17,6 +17,7 @@ export class Repository {
   categories: string[] = [];
 
   private filterObject = new Filter();
+  private paginationObject = new Pagination();
 
   constructor(private http: HttpClient) {
     // this.filter.category = 'soccer';
@@ -47,6 +48,7 @@ export class Repository {
       .subscribe(response => {
           this.products = response.data;
           this.categories = response.categories;
+          this.pagination.currentPage = 1;
         },
         error => console.error(error));
   }
@@ -135,5 +137,9 @@ export class Repository {
 
   get filter(): Filter {
     return this.filterObject;
+  }
+
+  get pagination(): Pagination {
+    return this.paginationObject;
   }
 }
