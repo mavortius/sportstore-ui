@@ -3,17 +3,11 @@ import {Component} from '@angular/core';
 import {Repository} from '../models/repository';
 
 @Component({
-  selector: 'app-category-filter',
+  selector: 'app-store-category-filter',
   templateUrl: 'category-filter.component.html'
 })
 export class CategoryFilterComponent {
-  public chessCategory = 'chess';
 
   constructor(private repo: Repository) {
-  }
-
-  setCategory(category: string) {
-    this.repo.filter.category = category;
-    this.repo.getProducts();
   }
 }

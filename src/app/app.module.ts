@@ -6,23 +6,19 @@ import {HttpClientModule} from '@angular/common/http';
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {ModelModule} from './models/model.module';
-import {ProductTableComponent} from './structure/product-table.component';
-import {CategoryFilterComponent} from './structure/category-filter.component';
-import {ProductDetailComponent} from './structure/product-detail.component';
+import {StoreModule} from './store/store-module';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    ProductTableComponent,
-    CategoryFilterComponent,
-    ProductDetailComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpClientModule,
     AppRoutingModule,
-    ModelModule
+    ModelModule,
+    StoreModule
   ],
   providers: [],
   bootstrap: [AppComponent]
