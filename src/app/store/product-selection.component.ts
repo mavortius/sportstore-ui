@@ -5,5 +5,5 @@ import {Component} from '@angular/core';
   templateUrl: 'product-selection.component.html'
 })
 export class ProductSelectionComponent {
-  
+
 }
