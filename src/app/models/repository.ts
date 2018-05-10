@@ -1,15 +1,17 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
+import {SESSION_STORAGE, StorageService} from 'ngx-webstorage-service';
+
 import {environment} from '../../environments/environment';
 import {Product} from './product.model';
 import {Supplier} from './supplier.model';
 import {Filter, Pagination} from './config-classes.repository';
-import {Observable} from 'rxjs/Observable';
-import {SESSION_STORAGE, StorageService} from 'ngx-webstorage-service';
+import {Order, OrderConfirmation} from './order.model';
 
 const productsUrl = 'products';
 const suppliersUrl = 'suppliers';
+const ordersUrl = 'orders';
 
 @Injectable()
 export class Repository {
@@ -17,6 +19,7 @@ export class Repository {
   products: Product[];
   suppliers: Supplier[] = [];
   categories: string[] = [];
+  orders: Order[] = [];
 
   private filterObject = new Filter();
   private paginationObject = new Pagination();
@@ -138,6 +141,30 @@ export class Repository {
       }, error => console.error(error));
   }
 
+  getOrders() {
+    this.http.get<Order[]>(`${environment.apiUrl}/${ordersUrl}`)
+      .subscribe(response => this.orders = response,
+        error => console.error(error));
+  }
+
+  createOrder(order: Order) {
+    this.http.post<OrderConfirmation>(`${environment.apiUrl}/${ordersUrl}`, {
+      name: order.name,
+      address: order.address,
+      payment: order.payment,
+      products: order.products
+    }).subscribe(response => {
+      order.orderConfirmation = response;
+      order.cart.clear();
+      order.clear();
+    }, error => console.error(error));
+  }
+
+  shipOrder(order: Order) {
+    this.http.post(`${environment.apiUrl}/${ordersUrl}/${order.orderId}`, {})
+      .subscribe(() => this.getOrders(), error => console.error(error));
+  }
+
   get filter(): Filter {
     return this.filterObject;
   }
@@ -151,8 +178,6 @@ export class Repository {
   }
 
   getSessionData(dataType: string): any {
-    const data = this.storage.get(dataType);
-
-    return data;
+    return this.storage.get(dataType);
   }
 }

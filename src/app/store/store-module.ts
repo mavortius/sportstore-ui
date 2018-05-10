@@ -10,6 +10,10 @@ import {ProductListComponent} from './product-list.component';
 import {RatingsComponent} from './ratings.component';
 import {ProductSelectionComponent} from './product-selection.component';
 import {CartDetailComponent} from './cart-detail.component';
+import {CheckoutDetailsComponent} from './checkout/checkout-details.component';
+import {CheckoutPaymentComponent} from './checkout/checkout-payment.component';
+import {CheckoutSummaryComponent} from './checkout/checkout-summary.component';
+import {OrderConfirmationComponent} from './checkout/order-confirmation.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +23,11 @@ import {CartDetailComponent} from './cart-detail.component';
     ProductListComponent,
     RatingsComponent,
     ProductSelectionComponent,
-    CartDetailComponent
+    CartDetailComponent,
+    CheckoutDetailsComponent,
+    CheckoutPaymentComponent,
+    CheckoutSummaryComponent,
+    OrderConfirmationComponent
   ],
   imports: [BrowserModule, RouterModule, FormsModule],
   exports: [ProductSelectionComponent]
