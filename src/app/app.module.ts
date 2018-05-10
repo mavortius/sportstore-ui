@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 
@@ -10,6 +10,13 @@ import {AppRoutingModule} from './app-routing.module';
 import {ModelModule} from './models/model.module';
 import {StoreModule} from './store/store-module';
 import {AdminModule} from './admin/admin.module';
+import {ErrorHandlerService} from './error-handler.service';
+
+const eHandler = new ErrorHandlerService();
+
+export function handler() {
+  return eHandler;
+}
 
 @NgModule({
   declarations: [
@@ -25,7 +32,10 @@ import {AdminModule} from './admin/admin.module';
     StorageServiceModule,
     AdminModule
   ],
-  providers: [],
+  providers: [
+    {provide: ErrorHandlerService, useFactory: handler},
+    {provide: ErrorHandler, useFactory: handler}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

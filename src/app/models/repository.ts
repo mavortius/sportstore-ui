@@ -1,5 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+
+import {catchError} from 'rxjs/operators';
 
 import {SESSION_STORAGE, StorageService} from 'ngx-webstorage-service';
 
@@ -8,6 +10,9 @@ import {Product} from './product.model';
 import {Supplier} from './supplier.model';
 import {Filter, Pagination} from './config-classes.repository';
 import {Order, OrderConfirmation} from './order.model';
+import {Observable} from 'rxjs/Observable';
+import {_throw} from 'rxjs/observable/throw';
+import {ErrorHandlerService, ValidationError} from '../error-handler.service';
 
 const productsUrl = 'products';
 const suppliersUrl = 'suppliers';
@@ -25,7 +30,7 @@ export class Repository {
   private paginationObject = new Pagination();
 
   constructor(@Inject(SESSION_STORAGE) private storage: StorageService,
-              private http: HttpClient) {
+              private http: HttpClient, private errorHandler: ErrorHandlerService) {
     // this.filter.category = 'soccer';
     this.filter.related = true;
     this.getProducts();
@@ -33,8 +38,8 @@ export class Repository {
 
   getProduct(id: number) {
     this.http.get<Product>(`${environment.apiUrl}/${productsUrl}/${id}`)
-      .subscribe(response => this.product = response,
-        error => console.error(error));
+      .pipe(catchError(this.handleError))
+      .subscribe(response => this.product = response);
   }
 
   getProducts() {
@@ -76,7 +81,21 @@ export class Repository {
       .subscribe(response => {
         prod.productId = response;
         this.products.push(prod);
-      }, error => console.error(error));
+      }, (errorResponse: HttpErrorResponse) => {
+        this.errorHandler.handleError(this.handleError(errorResponse));
+      });
+  }
+
+  private handleError(errorResponse: HttpErrorResponse): any {
+    if (errorResponse.status === 400) {
+      const jsonData = errorResponse.error;
+      console.log(jsonData);
+      const messages = Object.getOwnPropertyNames(jsonData)
+        .map(p => jsonData[p]);
+      console.log(messages);
+      return new ValidationError(messages);
+    }
+    return new Error('Network Error');
   }
 
   createProductAndSupplier(prod: Product, supp: Supplier) {
@@ -143,8 +162,7 @@ export class Repository {
 
   getOrders() {
     this.http.get<Order[]>(`${environment.apiUrl}/${ordersUrl}`)
-      .subscribe(response => this.orders = response,
-        error => console.error(error));
+      .subscribe(response => this.orders = response);
   }
 
   createOrder(order: Order) {
@@ -153,15 +171,16 @@ export class Repository {
       address: order.address,
       payment: order.payment,
       products: order.products
-    }).subscribe(response => {
-      order.orderConfirmation = response;
-      order.cart.clear();
-      order.clear();
-    }, error => console.error(error));
+    })
+      .subscribe(response => {
+        order.orderConfirmation = response;
+        order.clear();
+      }, error => console.error(error));
   }
 
   shipOrder(order: Order) {
     this.http.post(`${environment.apiUrl}/${ordersUrl}/${order.orderId}`, {})
+
       .subscribe(() => this.getOrders(), error => console.error(error));
   }
 
