@@ -12,13 +12,10 @@ export class Cart {
   constructor(private repo: Repository) {
     const cartData = repo.getSessionData('cart');
 
-/*    if (cartData != null) {
-      cartData.map(item => new ProductSelection(this, item.productId, item.name, item.price, item.quantity))
-        .forEach(item => this.selections.push(item));
+    if (cartData != null) {
+      this.selections = cartData;
       this.update(false);
-    }*/
-
-    console.log(cartData);
+    }
   }
 
   addProduct(product: Product) {

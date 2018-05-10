@@ -153,8 +153,6 @@ export class Repository {
   getSessionData(dataType: string): any {
     const data = this.storage.get(dataType);
 
-    console.log(data);
-
     return data;
   }
 }
