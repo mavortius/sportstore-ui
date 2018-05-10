@@ -9,6 +9,7 @@ import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {ModelModule} from './models/model.module';
 import {StoreModule} from './store/store-module';
+import {AdminModule} from './admin/admin.module';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import {StoreModule} from './store/store-module';
     AppRoutingModule,
     ModelModule,
     StoreModule,
-    StorageServiceModule
+    StorageServiceModule,
+    AdminModule
   ],
   providers: [],
   bootstrap: [AppComponent]
