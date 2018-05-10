@@ -81,21 +81,8 @@ export class Repository {
       .subscribe(response => {
         prod.productId = response;
         this.products.push(prod);
-      }, (errorResponse: HttpErrorResponse) => {
-        this.errorHandler.handleError(this.handleError(errorResponse));
-      });
-  }
-
-  private handleError(errorResponse: HttpErrorResponse): any {
-    if (errorResponse.status === 400) {
-      const jsonData = errorResponse.error;
-      console.log(jsonData);
-      const messages = Object.getOwnPropertyNames(jsonData)
-        .map(p => jsonData[p]);
-      console.log(messages);
-      return new ValidationError(messages);
-    }
-    return new Error('Network Error');
+      }, (error: HttpErrorResponse) =>
+        this.errorHandler.handleError(this.handleError(error)));
   }
 
   createProductAndSupplier(prod: Product, supp: Supplier) {
@@ -112,7 +99,8 @@ export class Repository {
         if (prod) {
           this.createProduct(prod);
         }
-      }, error => console.error(error));
+      }, (error: HttpErrorResponse) =>
+        this.errorHandler.handleError(this.handleError(error)));
   }
 
   replaceProduct(prod: Product) {
@@ -123,7 +111,8 @@ export class Repository {
 
     this.http.put(`${environment.apiUrl}/${productsUrl}/${prod.productId}`, data)
       .subscribe(() => this.getProducts(),
-        error => console.error(error));
+        (error: HttpErrorResponse) =>
+        this.errorHandler.handleError(this.handleError(error)));
   }
 
   replaceSupplier(supp: Supplier) {
@@ -133,7 +122,8 @@ export class Repository {
 
     this.http.put(`${environment.apiUrl}/${suppliersUrl}/${supp.supplierId}`, data)
       .subscribe(() => this.getProducts(),
-        error => console.error(error));
+        (error: HttpErrorResponse) =>
+        this.errorHandler.handleError(this.handleError(error)));
   }
 
   updateProduct(id: number, changes: Map<string, any>) {
@@ -143,13 +133,15 @@ export class Repository {
 
     this.http.patch(`${environment.apiUrl}/${productsUrl}/${id}`, patch)
       .subscribe(() => this.getProducts(),
-        error => console.error(error));
+        (error: HttpErrorResponse) =>
+        this.errorHandler.handleError(this.handleError(error)));
   }
 
   deleteProduct(id: number) {
     this.http.delete(`${environment.apiUrl}/${productsUrl}/${id}`)
       .subscribe(() => this.getProducts(),
-        error => console.error(error));
+        (error: HttpErrorResponse) =>
+        this.errorHandler.handleError(this.handleError(error)));
   }
 
   deleteSupplier(id: number) {
@@ -157,12 +149,14 @@ export class Repository {
       .subscribe(() => {
         this.getProducts();
         this.getSuppliers();
-      }, error => console.error(error));
+      }, (error: HttpErrorResponse) =>
+        this.errorHandler.handleError(this.handleError(error)));
   }
 
   getOrders() {
     this.http.get<Order[]>(`${environment.apiUrl}/${ordersUrl}`)
-      .subscribe(response => this.orders = response);
+      .subscribe(response => this.orders = response, (error: HttpErrorResponse) =>
+        this.errorHandler.handleError(this.handleError(error)));
   }
 
   createOrder(order: Order) {
@@ -175,13 +169,15 @@ export class Repository {
       .subscribe(response => {
         order.orderConfirmation = response;
         order.clear();
-      }, error => console.error(error));
+      }, (error: HttpErrorResponse) =>
+        this.errorHandler.handleError(this.handleError(error)));
   }
 
   shipOrder(order: Order) {
     this.http.post(`${environment.apiUrl}/${ordersUrl}/${order.orderId}`, {})
 
-      .subscribe(() => this.getOrders(), error => console.error(error));
+      .subscribe(() => this.getOrders(), (error: HttpErrorResponse) =>
+        this.errorHandler.handleError(this.handleError(error)));
   }
 
   get filter(): Filter {
@@ -198,5 +194,16 @@ export class Repository {
 
   getSessionData(dataType: string): any {
     return this.storage.get(dataType);
+  }
+
+  private handleError(errorResponse: HttpErrorResponse): any {
+    if (errorResponse.status === 400) {
+      const jsonData = errorResponse.error;
+      const messages = Object.getOwnPropertyNames(jsonData)
+        .map(p => jsonData[p]);
+
+      return new ValidationError(messages);
+    }
+    return new Error('Network Error');
   }
 }
