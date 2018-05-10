@@ -7,6 +7,7 @@ import {AdminComponent} from './admin.component';
 import {OverviewComponent} from './overview.component';
 import {ProductAdminComponent} from './product-admin.component';
 import {OrderAdminComponent} from './order-admin.component';
+import {ProductEditorComponent} from './product-editor.component';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import {OrderAdminComponent} from './order-admin.component';
     AdminComponent,
     OverviewComponent,
     ProductAdminComponent,
-    OrderAdminComponent
+    OrderAdminComponent,
+    ProductEditorComponent
   ]
 })
 export class AdminModule {
