@@ -68,6 +68,7 @@ export class Payment {
   cardNumber: string;
   cardExpiry: string;
   cardSecurityCode: string;
+  total: number;
 }
 
 export class CartLine {
